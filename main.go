@@ -1,5 +1,15 @@
 package main
 
+import (
+	"fmt"
+	"log"
+)
+
 func main() {
-	cursorOnMonitor()
+	m, err := cursorOnMonitor()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(m)
 }

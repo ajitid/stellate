@@ -1,7 +1,9 @@
+// taken from https://claude.ai/chat/c1e10885-ed75-4106-96d3-7db09b64fd09
 package main
 
 import (
 	"fmt"
+	"log/slog"
 	"syscall"
 	"unsafe"
 )
@@ -26,15 +28,14 @@ type (
 	HMONITOR uintptr
 )
 
-func cursorOnMonitor() {
+func cursorOnMonitor() (string, error) {
 	var cursorPos POINT
 	ret, _, err := procGetCursorPos.Call(uintptr(unsafe.Pointer(&cursorPos)))
 	if ret == 0 {
-		fmt.Printf("GetCursorPos failed: %v\n", err)
-		return
+		return "", fmt.Errorf("GetCursorPos failed: %v", err)
 	}
 
-	fmt.Printf("Cursor position: (%d, %d)\n", cursorPos.X, cursorPos.Y)
+	// fmt.Printf("Cursor position: (%d, %d)\n", cursorPos.X, cursorPos.Y)
 
 	var monitors []HMONITOR
 	callback := syscall.NewCallback(func(hMonitor HMONITOR, hdcMonitor uintptr, lprcMonitor *RECT, dwData uintptr) uintptr {
@@ -44,8 +45,7 @@ func cursorOnMonitor() {
 
 	ret, _, err = procEnumDisplayMonitors.Call(0, 0, callback, 0)
 	if ret == 0 {
-		fmt.Printf("EnumDisplayMonitors failed: %v\n", err)
-		return
+		return "", fmt.Errorf("EnumDisplayMonitors failed: %v", err)
 	}
 
 	for i, hMonitor := range monitors {
@@ -56,17 +56,18 @@ func cursorOnMonitor() {
 			uintptr(unsafe.Pointer(&info)),
 		)
 		if ret == 0 {
-			fmt.Printf("GetMonitorInfoW failed for monitor %d: %v\n", i, err)
+			slog.Warn(fmt.Sprintf("GetMonitorInfoW failed for monitor %d: %v\n", i, err))
 			continue
 		}
 
 		deviceName := syscall.UTF16ToString(info.SzDevice[:])
-		fmt.Printf("Monitor %d: %s\n", i, deviceName)
+		//fmt.Printf("Monitor %d: %s\n", i, deviceName)
 
 		if cursorPos.X >= info.RcMonitor.Left && cursorPos.X < info.RcMonitor.Right &&
 			cursorPos.Y >= info.RcMonitor.Top && cursorPos.Y < info.RcMonitor.Bottom {
-			fmt.Printf("Mouse cursor is on monitor: %s\n", deviceName)
-			break
+			return deviceName, nil
 		}
 	}
+
+	return "", fmt.Errorf("failed to find the monitor with the cursor")
 }
