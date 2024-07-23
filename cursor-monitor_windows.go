@@ -16,6 +16,8 @@ var (
 )
 
 type (
+	HMONITOR uintptr
+
 	POINT         struct{ X, Y int32 }
 	RECT          struct{ Left, Top, Right, Bottom int32 }
 	MONITORINFOEX struct {
@@ -25,7 +27,6 @@ type (
 		DwFlags   uint32
 		SzDevice  [32]uint16
 	}
-	HMONITOR uintptr
 )
 
 func cursorOnMonitor() (string, error) {

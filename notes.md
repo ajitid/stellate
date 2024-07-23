@@ -18,6 +18,12 @@ Other packages to try:
 "github.com/winlabs/gowin32"
 ```
 
+Code to reference:
+- https://github.com/PoeBlu/hardentools/blob/master/autorun.go
+- https://github.com/linexjlin/inputGPT
+- https://github.com/st0le/winrec
+- https://github.com/schollz/melrose
+
 ## Alternative way to get cursor position
 
 Alternative way to get cursor in case Golang tells that `syscall.Syscall` is deprecated and recommends to use `syscall.SyscallN` instead:
@@ -60,6 +66,12 @@ if err := cmd.Run(); err != nil {
 Get-WmiObject -Query "SELECT DeviceID, Name FROM Win32_PnPEntity WHERE PNPClass = 'Monitor'"
 ```
 
+or 
+
+```powershell
+Get-WmiObject WmiMonitorID -Property InstanceName -Namespace root\wmi
+```
+
 ## Softwares to control brightness
 
 https://github.com/xanderfrangos/twinkle-tray
@@ -67,7 +79,7 @@ https://github.com/emoacht/Monitorian
 https://www.nirsoft.net/utils/control_my_monitor.html
 https://github.com/chrismah/ClickMonitorDDC7.2
 
-## Getting a rnadom number
+## Getting a random number
 
 ```go
 // use "math/rand/v2" package
