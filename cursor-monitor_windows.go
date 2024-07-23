@@ -1,4 +1,4 @@
-// from Claude https://claude.ai/chat/980e2e17-9922-4621-a63d-89e219679628
+// from Claude
 package main
 
 import (
