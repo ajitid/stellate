@@ -78,3 +78,9 @@ func randRange(min, max int) int {
 
 brightness := randRange(0, 101)
 ```
+
+## Clean unused deps
+
+```sh
+go mod tidy
+```
