@@ -24,9 +24,9 @@ func main() {
 	defer sdl.Quit()
 }
 ```
-and run it using `go run .`. If it ends without printing anything, then it means it ran successfully. If you'd reopen VS Code you'd now see typings.
-
-VS Code will pick up typings eventually. I don't know what caused it but they became availble after few VS Code restarts.
+and run it using `go run .`. If it ends without printing anything, then it means it ran successfully. If you'd reopen VS Code you'd now see typings.  
+VS Code will pick up typings eventually. I don't know what caused it but they became availble after few VS Code restarts.  
+I noticed that using using Windows Terminal's Powershell to open code using `code .` always loads the typings.
 
 ## Attaching VS Code debugger
 

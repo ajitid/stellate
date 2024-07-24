@@ -65,6 +65,6 @@ func main() {
 
 		rnr.Present()
 
-		// sdl.Delay(16) // Cap at roughly 60 FPS (claude gave this, there would be a better way to get 16.67 or something dynamically)
+		sdl.Delay(16) // Cap at roughly 60 FPS (Note: claude gave this, there would be a better way to get 16.67 or something dynamically)
 	}
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"math"
@@ -46,10 +47,14 @@ func getCursorMonitor() string {
 // Beside absolute value like "44", the command can also take relative like "-12" or "+13".
 // This command can also return the output.
 // This fn however, will only take absolute value
-func setBrightness(monitorInstanceName string, value int) {
-	cmd := exec.Command("monitorian", "/set", monitorInstanceName, strconv.Itoa(value))
+func setBrightness(monitorInstanceName string, value int, ctx context.Context) {
+	cmd := exec.CommandContext(ctx, "monitorian", "/set", monitorInstanceName, strconv.Itoa(value))
 	if err := cmd.Run(); err != nil {
-		log.Fatal(err)
+		select {
+		case <-ctx.Done():
+		default:
+			log.Fatal(err)
+		}
 	}
 }
 
@@ -90,8 +95,16 @@ func brightnessSetter(commandChan <-chan BrightnessCommand) {
 	resetTimer := make(chan bool)
 	go clearCurrentMonitor(&currentMonitor, resetTimer)
 
+	var (
+		cmdCtx    context.Context
+		cancelCmd = func() {}
+	)
+
 	for {
 		command := <-commandChan
+
+		cancelCmd()
+		cmdCtx, cancelCmd = context.WithCancel(context.Background())
 
 		monitorInstanceName := getCursorMonitor()
 		if currentMonitor.name != monitorInstanceName {
@@ -113,13 +126,13 @@ func brightnessSetter(commandChan <-chan BrightnessCommand) {
 				clamp(0, 100,
 					int(math.Floor(
 						snapNumber(6.25)(float64(currentMonitor.brightness)-6.25))))
-			go setBrightness(currentMonitor.name, currentMonitor.brightness)
+			go setBrightness(currentMonitor.name, currentMonitor.brightness, cmdCtx)
 		case IncreaseBrightness:
 			currentMonitor.brightness =
 				clamp(0, 100,
 					int(math.Floor(
 						snapNumber(6.25)(float64(currentMonitor.brightness)+6.25))))
-			go setBrightness(currentMonitor.name, currentMonitor.brightness)
+			go setBrightness(currentMonitor.name, currentMonitor.brightness, cmdCtx)
 		}
 	}
 }
