@@ -3,7 +3,6 @@
 ## Installing
 
 https://youtu.be/OXSMx45kayw?si=gGHnLd15Zin8-ov1
-https://youtu.be/yxK_dwJ3Bbc?si=kiHyfIgx_D-85wu9
 
 Steps:
 1. Grab the latest release of mingw-w64 of https://github.com/niXman/mingw-builds-binaries and put the extracted folder into `C:\` so that it becomes `C:\mingw64` (I used x86_64-13.2.0-release-win32-seh-ucrt-rt_v11-rev0.7z)
@@ -28,6 +27,10 @@ func main() {
 and run it using `go run .`. If it ends without printing anything, then it means it ran successfully. If you'd reopen VS Code you'd now see typings.
 
 VS Code will pick up typings eventually. I don't know what caused it but they became availble after few VS Code restarts.
+
+## Attaching VS Code debugger
+
+https://youtu.be/yxK_dwJ3Bbc?si=8uiDtvJacm5x_Y18&t=1000
 
 ## Getting release (statically linked) libs:
 
