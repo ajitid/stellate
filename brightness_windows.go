@@ -8,6 +8,7 @@ import (
 )
 
 // can take absolute value like "44" or relative like "-12" or "+13"
+// for absolute: setBrightness(strconv.Itoa(brightness))
 func setBrightness(value string) {
 	monitorDisplayName, err := cursorOnMonitor()
 	if err != nil {

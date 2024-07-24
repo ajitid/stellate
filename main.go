@@ -1,16 +1,10 @@
 package main
 
-import (
-	"math/rand/v2"
-	"strconv"
-)
-
-// [min, max)
-func randRange(min, max int) int {
-	return rand.IntN(max-min) + min
-}
+import "github.com/veandco/go-sdl2/sdl"
 
 func main() {
-	brightness := randRange(0, 101)
-	setBrightness(strconv.Itoa(brightness))
+	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
+		panic(err)
+	}
+	defer sdl.Quit()
 }
