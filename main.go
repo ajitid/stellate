@@ -1,24 +1,19 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-func handleKeypress(ev *sdl.KeyboardEvent) {
+func handleKeypress(ev *sdl.KeyboardEvent, brightnessCommandChan chan<- BrightnessCommand) {
 	// for keyboard modifiers, use ev.Keysym.Mod (preferred) or sdl.GetModState()
 	if ev.Type == sdl.KEYDOWN {
 		if ev.Repeat == 0 {
 			if ev.Keysym.Sym == sdl.K_LEFT {
-				go func() {
-					fmt.Println(setBrightness("-10"))
-				}()
+				brightnessCommandChan <- DecreaseBrightness
 			} else if ev.Keysym.Sym == sdl.K_RIGHT {
-				go func() {
-					fmt.Println(setBrightness("+10"))
-				}()
+				brightnessCommandChan <- IncreaseBrightness
 			}
 		} else {
 
@@ -32,6 +27,9 @@ func update() {
 }
 
 func main() {
+	var brightnessCommandChan = make(chan BrightnessCommand, 1)
+	go brightnessSetter(brightnessCommandChan)
+
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		log.Fatal(err)
 	}
@@ -56,7 +54,7 @@ func main() {
 			case *sdl.QuitEvent:
 				quit = true
 			case *sdl.KeyboardEvent:
-				handleKeypress(ev)
+				handleKeypress(ev, brightnessCommandChan)
 			}
 		}
 
