@@ -6,6 +6,12 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
+const (
+	WindowW = 800
+	WindowH = 600
+	FPS     = 60
+)
+
 func handleKeypress(ev *sdl.KeyboardEvent, brightnessCommandChan chan<- BrightnessCommand) {
 	// for keyboard modifiers, use ev.Keysym.Mod (preferred) or sdl.GetModState()
 	if ev.Type == sdl.KEYDOWN {
@@ -35,7 +41,7 @@ func main() {
 	}
 	defer sdl.Quit()
 
-	win, err := sdl.CreateWindow("testing sdl2", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, 800, 600, sdl.WINDOW_OPENGL)
+	win, err := sdl.CreateWindow("testing sdl2", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, WindowW, WindowH, sdl.WINDOW_OPENGL)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -47,8 +53,11 @@ func main() {
 	}
 	defer rnr.Destroy()
 
+	frameDelay := sdl.GetPerformanceFrequency() / FPS // also known as target frame time: number of ticks that should pass between frames to achieve our target FPS
 	quit := false
 	for !quit {
+		frameStart := sdl.GetPerformanceCounter()
+
 		for ev := sdl.PollEvent(); ev != nil; ev = sdl.PollEvent() {
 			switch ev := ev.(type) {
 			case *sdl.QuitEvent:
@@ -65,6 +74,11 @@ func main() {
 
 		rnr.Present()
 
-		sdl.Delay(16) // Cap at roughly 60 FPS (Note: claude gave this, there would be a better way to get 16.67 or something dynamically)
+		// Cap the framerate
+		frameTime := sdl.GetPerformanceCounter() - frameStart
+		// If we've used less time than our frame delay, we wait for the remaining time
+		if frameTime < frameDelay {
+			sdl.Delay(uint32((frameDelay - frameTime) * 1000 / sdl.GetPerformanceFrequency())) // we convert the delay from performance counter ticks to milliseconds for SDL_Delay()
+		}
 	}
 }

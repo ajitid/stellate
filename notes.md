@@ -3,6 +3,12 @@
 https://github.com/akavel/rsrc
 There's also https://gobyexample.com/embed-directive
 
+# Global hotkeys
+
+https://pkg.go.dev/golang.design/x/hotkey
+https://github.com/micmonay/keybd_event
+
+
 ## Display name to device ID mapping
 
 [This](https://github.com/posthumz/DisplayDevices) from [here](https://www.reddit.com/r/PowerShell/comments/19e7das/getting_display_id_for_a_display_device/)
