@@ -12,19 +12,13 @@ func handleKeypress(ev *sdl.KeyboardEvent) {
 	if ev.Type == sdl.KEYDOWN {
 		if ev.Repeat == 0 {
 			if ev.Keysym.Sym == sdl.K_LEFT {
-				fmt.Println("player moves left")
-				/*
-					go func() {
-						fmt.Println(setBrightness("-10"))
-					}()
-				*/
+				go func() {
+					fmt.Println(setBrightness("-10"))
+				}()
 			} else if ev.Keysym.Sym == sdl.K_RIGHT {
-				fmt.Println("player moves right")
-				/*
-					go func() {
-						fmt.Println(setBrightness("+10"))
-					}()
-				*/
+				go func() {
+					fmt.Println(setBrightness("+10"))
+				}()
 			}
 		} else {
 
