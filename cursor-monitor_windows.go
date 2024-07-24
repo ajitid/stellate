@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"log/slog"
 	"syscall"
 	"unsafe"
@@ -13,10 +14,16 @@ var (
 	procGetCursorPos        = user32.NewProc("GetCursorPos")
 	procEnumDisplayMonitors = user32.NewProc("EnumDisplayMonitors")
 	procGetMonitorInfoW     = user32.NewProc("GetMonitorInfoW")
+
+	dxva2                                   = syscall.NewLazyDLL("dxva2.dll")
+	getNumberOfPhysicalMonitorsFromHMONITOR = dxva2.NewProc("GetNumberOfPhysicalMonitorsFromHMONITOR")
+	getPhysicalMonitorsFromHMONITOR         = dxva2.NewProc("GetPhysicalMonitorsFromHMONITOR")
+	getMonitorBrightness                    = dxva2.NewProc("GetMonitorBrightness")
+	setMonitorBrightness                    = dxva2.NewProc("SetMonitorBrightness")
 )
 
 type (
-	HMONITOR uintptr
+	HMONITOR syscall.Handle
 
 	POINT         struct{ X, Y int32 }
 	RECT          struct{ Left, Top, Right, Bottom int32 }
@@ -27,13 +34,17 @@ type (
 		DwFlags   uint32
 		SzDevice  [32]uint16
 	}
+	PHYSICAL_MONITOR struct {
+		hPhysicalMonitor             syscall.Handle
+		szPhysicalMonitorDescription [128]uint16
+	}
 )
 
-func cursorOnMonitor() (string, error) {
+func cursorOnMonitor() (*HMONITOR, string, error) {
 	var cursorPos POINT
 	ret, _, err := procGetCursorPos.Call(uintptr(unsafe.Pointer(&cursorPos)))
 	if ret == 0 {
-		return "", fmt.Errorf("GetCursorPos failed: %v", err)
+		return nil, "", fmt.Errorf("GetCursorPos failed: %v", err)
 	}
 
 	// fmt.Printf("Cursor position: (%d, %d)\n", cursorPos.X, cursorPos.Y)
@@ -46,7 +57,7 @@ func cursorOnMonitor() (string, error) {
 
 	ret, _, err = procEnumDisplayMonitors.Call(0, 0, callback, 0)
 	if ret == 0 {
-		return "", fmt.Errorf("EnumDisplayMonitors failed: %v", err)
+		return nil, "", fmt.Errorf("EnumDisplayMonitors failed: %v", err)
 	}
 
 	for i, hMonitor := range monitors {
@@ -66,9 +77,74 @@ func cursorOnMonitor() (string, error) {
 
 		if cursorPos.X >= info.RcMonitor.Left && cursorPos.X < info.RcMonitor.Right &&
 			cursorPos.Y >= info.RcMonitor.Top && cursorPos.Y < info.RcMonitor.Bottom {
-			return deviceName, nil
+			return &hMonitor, deviceName, nil
 		}
 	}
 
-	return "", fmt.Errorf("failed to find the monitor with the cursor")
+	return nil, "", fmt.Errorf("failed to find the monitor with the cursor")
+}
+
+type DDCMonitor HMONITOR // usually external displays
+
+func (hMonitor DDCMonitor) setBrightness(value int) {
+	var numPhysicalMonitors uint32
+	ret, _, err := getNumberOfPhysicalMonitorsFromHMONITOR.Call(uintptr(hMonitor), uintptr(unsafe.Pointer(&numPhysicalMonitors)))
+	if ret == 0 {
+		log.Fatalf("GetNumberOfPhysicalMonitorsFromHMONITOR failed: %v\n", err)
+	}
+
+	physicalMonitors := make([]PHYSICAL_MONITOR, numPhysicalMonitors)
+	ret, _, err = getPhysicalMonitorsFromHMONITOR.Call(
+		uintptr(hMonitor),
+		uintptr(numPhysicalMonitors),
+		uintptr(unsafe.Pointer(&physicalMonitors[0])),
+	)
+	if ret == 0 {
+		log.Fatalf("GetPhysicalMonitorsFromHMONITOR failed: %v\n", err)
+	}
+
+	for _, monitor := range physicalMonitors {
+		ret, _, err = setMonitorBrightness.Call(uintptr(monitor.hPhysicalMonitor), uintptr(value))
+		if ret == 0 {
+			log.Fatalf("SetMonitorBrightness failed: %v\n", err)
+		}
+	}
+}
+
+func (hMonitor DDCMonitor) getBrightness() int {
+	var numPhysicalMonitors uint32
+	ret, _, err := getNumberOfPhysicalMonitorsFromHMONITOR.Call(uintptr(hMonitor), uintptr(unsafe.Pointer(&numPhysicalMonitors)))
+	if ret == 0 {
+		log.Fatalf("GetNumberOfPhysicalMonitorsFromHMONITOR failed: %v\n", err)
+	}
+
+	physicalMonitors := make([]PHYSICAL_MONITOR, numPhysicalMonitors)
+	ret, _, err = getPhysicalMonitorsFromHMONITOR.Call(
+		uintptr(hMonitor),
+		uintptr(numPhysicalMonitors),
+		uintptr(unsafe.Pointer(&physicalMonitors[0])),
+	)
+	if ret == 0 {
+		log.Fatalf("GetPhysicalMonitorsFromHMONITOR failed: %v\n", err)
+	}
+
+	brightness := -1
+	for _, monitor := range physicalMonitors {
+		var minimumBrightness, currentBrightness, maximumBrightness uint32
+		ret, _, err = getMonitorBrightness.Call(
+			uintptr(monitor.hPhysicalMonitor),
+			uintptr(unsafe.Pointer(&minimumBrightness)),
+			uintptr(unsafe.Pointer(&currentBrightness)),
+			uintptr(unsafe.Pointer(&maximumBrightness)),
+		)
+		if ret == 0 {
+			log.Fatalf("GetMonitorBrightness failed: %v\n", err)
+		}
+		brightness = int(currentBrightness)
+	}
+
+	if brightness == -1 {
+		log.Fatal("couldn't get brightness")
+	}
+	return brightness
 }
