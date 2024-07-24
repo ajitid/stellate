@@ -6,6 +6,7 @@ import (
 	"math"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/gek64/displayController"
 )
@@ -20,6 +21,13 @@ const (
 type Monitor interface {
 	getBrightness() int
 	setBrightness(int)
+	getInstanceName() string
+}
+
+type MonitorInfo struct {
+	name       string
+	brightness int
+	monitor    *Monitor
 }
 
 func getCursorMonitor() Monitor {
@@ -49,33 +57,61 @@ func getCursorMonitor() Monitor {
 	if isWMIMonitor {
 		return WMIMonitor(monitorInstanceName)
 	} else {
-		m, err := displayController.GetPhysicalMonitor(syscall.Handle(*hMonitor))
+		physicalMonitor, err := displayController.GetPhysicalMonitor(syscall.Handle(*hMonitor))
 		if err != nil {
 			log.Fatal(err)
 		}
-		return DDCMonitor(m)
+		return DDCMonitor{name: monitorInstanceName, physicalMonitor: &physicalMonitor}
 	}
 }
 
 func brightnessSetter(commandChan <-chan BrightnessCommand) {
+	var currentMonitor MonitorInfo
+	resetTimer := make(chan bool)
+	go clearCurrentMonitor(&currentMonitor, resetTimer)
+
 	for {
 		command := <-commandChan
 
 		m := getCursorMonitor()
+		if currentMonitor.name != m.getInstanceName() {
+			b := m.getBrightness()
+
+			resetTimer <- true
+			currentMonitor.name = m.getInstanceName()
+			currentMonitor.brightness = b
+			currentMonitor.monitor = &m
+		} else {
+			resetTimer <- true
+		}
 
 		switch command {
 		case DecreaseBrightness:
-			brightness :=
+			currentMonitor.brightness =
 				clamp(0, 100,
 					int(math.Floor(
-						snapNumber(6.25)(float64(m.getBrightness())-6.25))))
-			go m.setBrightness(brightness)
+						snapNumber(6.25)(float64(currentMonitor.brightness)-6.25))))
+			go m.setBrightness(currentMonitor.brightness)
 		case IncreaseBrightness:
-			brightness :=
+			currentMonitor.brightness =
 				clamp(0, 100,
 					int(math.Floor(
-						snapNumber(6.25)(float64(m.getBrightness())+6.25))))
-			go m.setBrightness(brightness)
+						snapNumber(6.25)(float64(currentMonitor.brightness)+6.25))))
+			go m.setBrightness(currentMonitor.brightness)
 		}
+	}
+}
+
+func clearCurrentMonitor(currentMonitor *MonitorInfo, resetTimer <-chan bool) {
+	t := time.AfterFunc(0, func() {})
+
+	for {
+		<-resetTimer
+		t.Stop()
+		t = time.AfterFunc(1*time.Second+200*time.Millisecond, func() {
+			currentMonitor.name = ""
+			currentMonitor.brightness = 0
+			currentMonitor.monitor = nil
+		})
 	}
 }

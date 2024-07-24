@@ -76,17 +76,24 @@ func cursorOnMonitor() (*HMONITOR, string, error) {
 	return nil, "", fmt.Errorf("failed to find the monitor with the cursor")
 }
 
-type DDCMonitor displayController.PhysicalMonitorInfo // usually external displays
+type DDCMonitor struct {
+	name            string
+	physicalMonitor *displayController.PhysicalMonitorInfo
+} // usually external displays
+
+func (m DDCMonitor) getInstanceName() string {
+	return m.name
+}
 
 func (m DDCMonitor) setBrightness(value int) {
-	err := displayController.SetMonitorBrightness(m.Handle, value)
+	err := displayController.SetMonitorBrightness(m.physicalMonitor.Handle, value)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
 func (m DDCMonitor) getBrightness() int {
-	b, _, _, err := displayController.GetMonitorBrightness(m.Handle)
+	b, _, _, err := displayController.GetMonitorBrightness(m.physicalMonitor.Handle)
 	if err != nil {
 		log.Fatal(err)
 	}
