@@ -5,6 +5,9 @@ import (
 	"log"
 	"math"
 	"strings"
+	"syscall"
+
+	"github.com/gek64/displayController"
 )
 
 type BrightnessCommand int
@@ -46,7 +49,11 @@ func getCursorMonitor() Monitor {
 	if isWMIMonitor {
 		return WMIMonitor(monitorInstanceName)
 	} else {
-		return DDCMonitor(*hMonitor)
+		m, err := displayController.GetPhysicalMonitor(syscall.Handle(*hMonitor))
+		if err != nil {
+			log.Fatal(err)
+		}
+		return DDCMonitor(m)
 	}
 }
 

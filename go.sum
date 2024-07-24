@@ -1,3 +1,5 @@
+github.com/gek64/displayController v1.0.2 h1:xx1Um0aBResxS6eVjhEXU4U0LqjH723E9UPTDsC/j7M=
+github.com/gek64/displayController v1.0.2/go.mod h1:N9v4SImJeiH2Ep/epdg2OvGPeRhqVRthu04WhhF/S6Q=
 github.com/go-ole/go-ole v1.2.6 h1:/Fpf6oFPoeFik9ty7siob0G6Ke8QvQEuVcuChpwXzpY=
 github.com/go-ole/go-ole v1.2.6/go.mod h1:pprOEPIfldk/42T2oK7lQ4v4JSDwmV0As9GaiUsvbm0=
 github.com/veandco/go-sdl2 v0.4.40 h1:fZv6wC3zz1Xt167P09gazawnpa0KY5LM7JAvKpX9d/U=
