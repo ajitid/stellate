@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math"
 	"strings"
 )
 
@@ -46,5 +47,28 @@ func getCursorMonitor() Monitor {
 		return WMIMonitor(monitorInstanceName)
 	} else {
 		return DDCMonitor(*hMonitor)
+	}
+}
+
+func brightnessSetter(commandChan <-chan BrightnessCommand) {
+	for {
+		command := <-commandChan
+
+		m := getCursorMonitor()
+
+		switch command {
+		case DecreaseBrightness:
+			brightness :=
+				clamp(0, 100,
+					int(math.Floor(
+						snapNumber(6.25)(float64(m.getBrightness())-6.25))))
+			go m.setBrightness(brightness)
+		case IncreaseBrightness:
+			brightness :=
+				clamp(0, 100,
+					int(math.Floor(
+						snapNumber(6.25)(float64(m.getBrightness())+6.25))))
+			go m.setBrightness(brightness)
+		}
 	}
 }
