@@ -62,15 +62,23 @@ if err := cmd.Run(); err != nil {
 
 ## Get details of attached monitors
 
+Option A:
+
 ```powershell
 Get-WmiObject -Query "SELECT DeviceID, Name FROM Win32_PnPEntity WHERE PNPClass = 'Monitor'"
 ```
 
-or 
+or option B:
 
 ```powershell
 Get-WmiObject WmiMonitorID -Property InstanceName -Namespace root\wmi
+# OR
+Get-WmiObject WmiMonitorID -Namespace root\wmi | Where-Object { $_.InstanceName -like "DISPLAY\SOMESTRING\*" } | Select-Object -ExpandProperty InstanceName
+# OR
+Get-WmiObject -Query "SELECT InstanceName FROM WmiMonitorID" -Namespace root\wmi
 ```
+
+Prefer option B as it doesn't capitalizes `14db058f` part of `DISPLAY\SHP1523\5&14db058f&2&UID512_0` and thus can directly be supplied to monitorian (after stripping _0 of course).
 
 ## Softwares to control brightness
 
@@ -95,4 +103,21 @@ brightness := randRange(0, 101)
 
 ```sh
 go mod tidy
+```
+
+## Decoding WMI string
+
+Just in case if I need it. See version 3 of 3 of the artifact here https://claude.ai/chat/03348c23-6712-4da4-bacb-7c682c935a14.
+The struct in there suggest to use `string` type for bytes which is probably incorrect.
+
+```golang
+func decodeWMIString(s string) string {
+	bytes := []byte(s)
+	for i := 0; i < len(bytes); i++ {
+		if bytes[i] == 0 {
+			return string(bytes[:i])
+		}
+	}
+	return s
+}
 ```
