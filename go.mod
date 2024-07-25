@@ -4,7 +4,6 @@ go 1.22.5
 
 require (
 	github.com/gek64/displayController v1.0.2
-	github.com/veandco/go-sdl2 v0.4.40
 	github.com/yusufpapurcu/wmi v1.2.4
 	golang.design/x/hotkey v0.4.1
 )
