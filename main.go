@@ -8,9 +8,9 @@ import (
 )
 
 const (
-	WindowW = 800
-	WindowH = 600
-	FPS     = 60
+	WinWidth  = 800
+	WinHeight = 600
+	FPS       = 60
 )
 
 func handleKeypress(ev *sdl.KeyboardEvent, brightnessCommandChan chan<- BrightnessCommand) {
@@ -43,7 +43,7 @@ func main() {
 	}
 	defer sdl.Quit()
 
-	win, err := sdl.CreateWindow("testing sdl2", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, WindowW, WindowH, sdl.WINDOW_OPENGL)
+	win, err := sdl.CreateWindow("testing sdl2", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, WinWidth, WinHeight, sdl.WINDOW_OPENGL)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -128,3 +128,7 @@ func decodeWMIString(s string) string {
 	return s
 }
 ```
+
+## Rest
+
+https://github.com/nyaosorg/go-windows-su sudo/administrator
