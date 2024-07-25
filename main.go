@@ -46,8 +46,9 @@ func main() {
 	}
 
 	var (
-		progressWidth  int32 = (WinWidth * 0.8)
-		progressHeight int32 = 4
+		progressWidth       int32 = (WinWidth * 0.7)
+		progressLeftPadding int32 = 15
+		progressHeight      int32 = 4
 	)
 
 	for !rl.WindowShouldClose() {
@@ -61,12 +62,22 @@ func main() {
 
 		{
 			// progress bg
-			rl.DrawRectangle((WinWidth-progressWidth)/2, WinHeight/2-progressHeight/2, progressWidth, progressHeight, rl.NewColor(27, 28, 32, 255))
+			rl.DrawRectangle((WinWidth-progressWidth)/2+progressLeftPadding, (WinHeight-progressHeight)/2, progressWidth, progressHeight, rl.NewColor(27, 28, 32, 255))
 		}
 
 		{
 			// progress fg
-			rl.DrawRectangle((WinWidth-progressWidth)/2, WinHeight/2-progressHeight/2, progressWidth*int32(brightness)/100, progressHeight, rl.NewColor(76, 194, 255, 255))
+			rl.DrawRectangle((WinWidth-progressWidth)/2+progressLeftPadding, (WinHeight-progressHeight)/2, progressWidth*int32(brightness)/100, progressHeight, rl.NewColor(76, 194, 255, 255))
+		}
+
+		{
+			var (
+				x      int32   = WinWidth * 13 / 100
+				y      int32   = WinHeight / 2
+				radius float32 = 3
+			)
+			rl.DrawCircleLines(x, y, radius, rl.LightGray)
+			drawLinesAroundCircle(rl.Vector2{X: float32(x), Y: float32(y)}, radius+4.3, 8, 2.1, rl.LightGray)
 		}
 
 		rl.EndDrawing()

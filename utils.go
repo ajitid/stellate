@@ -6,6 +6,7 @@ import (
 	"math/rand/v2"
 
 	"github.com/adrg/sysfont"
+	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
 func getSystemFontPath() string {
@@ -72,5 +73,20 @@ func snapSlice(points []float64) func(float64) snapResult {
 		}
 
 		return result // return the last item as the result
+	}
+}
+
+func drawLinesAroundCircle(center rl.Vector2, radius float32, lineCount int32, lineLength float32, color rl.Color) {
+	for i := int32(0); i < lineCount; i++ {
+		angle := float32(i) / float32(lineCount) * 2 * math.Pi
+		start := rl.Vector2{
+			X: center.X + float32(math.Cos(float64(angle)))*radius,
+			Y: center.Y + float32(math.Sin(float64(angle)))*radius,
+		}
+		end := rl.Vector2{
+			X: center.X + float32(math.Cos(float64(angle)))*(radius+lineLength),
+			Y: center.Y + float32(math.Sin(float64(angle)))*(radius+lineLength),
+		}
+		rl.DrawLineV(start, end, color)
 	}
 }
