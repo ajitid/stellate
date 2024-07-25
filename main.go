@@ -18,9 +18,9 @@ func handleKeypress(ev *sdl.KeyboardEvent, brightnessCommandChan chan<- Brightne
 	if ev.Type == sdl.KEYDOWN {
 		if ev.Repeat == 0 {
 			if ev.Keysym.Sym == sdl.K_LEFT {
-				brightnessCommandChan <- DecreaseBrightness
+				// brightnessCommandChan <- DecreaseBrightness
 			} else if ev.Keysym.Sym == sdl.K_RIGHT {
-				brightnessCommandChan <- IncreaseBrightness
+				// brightnessCommandChan <- IncreaseBrightness
 			}
 		} else {
 
