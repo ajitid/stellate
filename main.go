@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	rl "github.com/gen2brain/raylib-go/raylib"
 	"golang.design/x/hotkey"
 )
 
@@ -15,6 +16,21 @@ func main() {
 	var brightnessCommandChan = make(chan BrightnessCommand, 1)
 	go brightnessSetter(brightnessCommandChan)
 	go registerHotkeys(brightnessCommandChan)
+
+	rl.InitWindow(800, 450, "scintilla")
+	rl.SetWindowState(rl.FlagWindowUndecorated)
+	defer rl.CloseWindow()
+
+	rl.SetTargetFPS(60)
+
+	for !rl.WindowShouldClose() {
+		rl.BeginDrawing()
+
+		rl.ClearBackground(rl.RayWhite)
+		rl.DrawText("Congrats! You created your first window!", 190, 200, 20, rl.LightGray)
+
+		rl.EndDrawing()
+	}
 }
 
 func registerHotkeys(brightnessCommandChan chan<- BrightnessCommand) {
