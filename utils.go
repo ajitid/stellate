@@ -1,9 +1,23 @@
 package main
 
 import (
+	"log"
 	"math"
 	"math/rand/v2"
+
+	"github.com/adrg/sysfont"
 )
+
+func getSystemFontPath() string {
+	finder := sysfont.NewFinder(&sysfont.FinderOpts{
+		Extensions: []string{".ttf"},
+	})
+	font := finder.Match("Segoe UI")
+	if font == nil {
+		log.Fatal("system font not found")
+	}
+	return font.Filename
+}
 
 // [min, max)
 func randRange(min, max int) int {

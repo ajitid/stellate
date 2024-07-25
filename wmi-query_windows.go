@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
+	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/yusufpapurcu/wmi"
 )
 
@@ -54,16 +55,24 @@ func isTypeWMIMonitor(monitorInstanceName string) (bool, error) {
 }
 
 // https://stackoverflow.com/a/62634211/7683365
-type WMIMonitor string // usually integrated laptop displays
-
-func (instanceName WMIMonitor) getInstanceName() string {
-	return string(instanceName)
+// usually integrated laptop displays
+type WMIMonitor struct {
+	name string
+	pos  rl.Vector2
 }
 
-func (instanceName WMIMonitor) getBrightness() int {
+func (m WMIMonitor) getInstanceName() string {
+	return m.name
+}
+
+func (m WMIMonitor) getPosition() rl.Vector2 {
+	return m.pos
+}
+
+func (m WMIMonitor) getBrightness() int {
 	var monitors []WmiMonitorBrightness
 	// DISPLAY\SHP1523\5&14db058f&2&UID512_0 needs to be changed to DISPLAY\\SHP1523\\5&14db058f&2&UID512_0
-	query := fmt.Sprintf(`SELECT CurrentBrightness FROM WmiMonitorBrightness WHERE InstanceName="%s"`, strings.ReplaceAll(instanceName.getInstanceName(), `\`, `\\`))
+	query := fmt.Sprintf(`SELECT CurrentBrightness FROM WmiMonitorBrightness WHERE InstanceName="%s"`, strings.ReplaceAll(m.getInstanceName(), `\`, `\\`))
 	err := wmi.QueryNamespace(query, &monitors, "root\\wmi")
 	if err != nil {
 		log.Fatalf("error querying WMI: %v", err)
@@ -78,9 +87,9 @@ func (instanceName WMIMonitor) getBrightness() int {
 // https://superuser.com/a/1781874
 // I wanted to use this but I couldn't figure it out
 // https://github.com/StackExchange/wmi/pull/45#issuecomment-590396746
-func (instanceName WMIMonitor) setBrightness(value int) {
+func (m WMIMonitor) setBrightness(value int) {
 	cmd := exec.Command("wmic", `/NAMESPACE:\\root\wmi`, "PATH", "WmiMonitorBrightnessMethods",
-		"WHERE", fmt.Sprintf("Active=TRUE AND InstanceName='%s'", strings.ReplaceAll(instanceName.getInstanceName(), `\`, `\\`)),
+		"WHERE", fmt.Sprintf("Active=TRUE AND InstanceName='%s'", strings.ReplaceAll(m.getInstanceName(), `\`, `\\`)),
 		"CALL", "WmiSetBrightness", fmt.Sprintf("Brightness=%d", value), "Timeout=0")
 	if err := cmd.Run(); err != nil {
 		log.Fatal(err)

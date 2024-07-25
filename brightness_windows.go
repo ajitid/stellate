@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gek64/displayController"
+	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
 type BrightnessCommand int
@@ -22,6 +23,7 @@ type Monitor interface {
 	getBrightness() int
 	setBrightness(int)
 	getInstanceName() string
+	getPosition() rl.Vector2
 }
 
 type MonitorInfo struct {
@@ -31,7 +33,7 @@ type MonitorInfo struct {
 }
 
 func getCursorMonitor() Monitor {
-	hMonitor, monitorDisplayName, err := cursorOnMonitor()
+	hMonitor, monitorDisplayName, pos, err := cursorOnMonitor()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -55,20 +57,20 @@ func getCursorMonitor() Monitor {
 	}
 
 	if isWMIMonitor {
-		return WMIMonitor(monitorInstanceName)
+		return WMIMonitor{name: monitorInstanceName, pos: pos}
 	} else {
 		physicalMonitor, err := displayController.GetPhysicalMonitor(syscall.Handle(*hMonitor))
 		if err != nil {
 			log.Fatal(err)
 		}
-		return DDCMonitor{name: monitorInstanceName, physicalMonitor: &physicalMonitor}
+		return DDCMonitor{name: monitorInstanceName, physicalMonitor: &physicalMonitor, pos: pos}
 	}
 }
 
-func brightnessSetter(commandChan <-chan BrightnessCommand) {
+func brightnessSetter(commandChan <-chan BrightnessCommand, popupVisibleChan chan<- bool, popupPosChan chan<- rl.Vector2) {
 	var currentMonitor MonitorInfo
 	resetTimer := make(chan bool)
-	go clearCurrentMonitor(&currentMonitor, resetTimer)
+	go clearCurrentMonitor(&currentMonitor, resetTimer, popupVisibleChan)
 
 	for {
 		command := <-commandChan
@@ -78,12 +80,18 @@ func brightnessSetter(commandChan <-chan BrightnessCommand) {
 			b := m.getBrightness()
 
 			resetTimer <- true
+			// popup could be visible on other monitor, so we should hide it before revising its position, otherwise:
+			// - it may cause a flicker because we're repositioning it, and
+			// - we may also see brightness level of the previous monitor for some ms
+			popupVisibleChan <- false
+			popupPosChan <- m.getPosition()
 			currentMonitor.name = m.getInstanceName()
 			currentMonitor.brightness = b
 			currentMonitor.monitor = &m
 		} else {
 			resetTimer <- true
 		}
+		popupVisibleChan <- true
 
 		switch command {
 		case DecreaseBrightness:
@@ -91,24 +99,27 @@ func brightnessSetter(commandChan <-chan BrightnessCommand) {
 				clamp(0, 100,
 					int(math.Floor(
 						snapNumber(6.25)(float64(currentMonitor.brightness)-6.25))))
+			brightness = currentMonitor.brightness
 			go m.setBrightness(currentMonitor.brightness)
 		case IncreaseBrightness:
 			currentMonitor.brightness =
 				clamp(0, 100,
 					int(math.Floor(
 						snapNumber(6.25)(float64(currentMonitor.brightness)+6.25))))
+			brightness = currentMonitor.brightness
 			go m.setBrightness(currentMonitor.brightness)
 		}
 	}
 }
 
-func clearCurrentMonitor(currentMonitor *MonitorInfo, resetTimer <-chan bool) {
+func clearCurrentMonitor(currentMonitor *MonitorInfo, resetTimer <-chan bool, popupVisibleChan chan<- bool) {
 	t := time.AfterFunc(0, func() {})
 
 	for {
 		<-resetTimer
 		t.Stop()
 		t = time.AfterFunc(1*time.Second+200*time.Millisecond, func() {
+			popupVisibleChan <- false
 			currentMonitor.name = ""
 			currentMonitor.brightness = 0
 			currentMonitor.monitor = nil

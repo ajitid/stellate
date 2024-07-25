@@ -9,6 +9,7 @@ import (
 	"unsafe"
 
 	"github.com/gek64/displayController"
+	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
 var (
@@ -32,11 +33,11 @@ type (
 	}
 )
 
-func cursorOnMonitor() (*HMONITOR, string, error) {
+func cursorOnMonitor() (*HMONITOR, string, rl.Vector2, error) {
 	var cursorPos POINT
 	ret, _, err := procGetCursorPos.Call(uintptr(unsafe.Pointer(&cursorPos)))
 	if ret == 0 {
-		return nil, "", fmt.Errorf("GetCursorPos failed: %v", err)
+		return nil, "", rl.Vector2{}, fmt.Errorf("GetCursorPos failed: %v", err)
 	}
 
 	// fmt.Printf("Cursor position: (%d, %d)\n", cursorPos.X, cursorPos.Y)
@@ -49,7 +50,7 @@ func cursorOnMonitor() (*HMONITOR, string, error) {
 
 	ret, _, err = procEnumDisplayMonitors.Call(0, 0, callback, 0)
 	if ret == 0 {
-		return nil, "", fmt.Errorf("EnumDisplayMonitors failed: %v", err)
+		return nil, "", rl.Vector2{}, fmt.Errorf("EnumDisplayMonitors failed: %v", err)
 	}
 
 	for i, hMonitor := range monitors {
@@ -69,20 +70,25 @@ func cursorOnMonitor() (*HMONITOR, string, error) {
 
 		if cursorPos.X >= info.RcMonitor.Left && cursorPos.X < info.RcMonitor.Right &&
 			cursorPos.Y >= info.RcMonitor.Top && cursorPos.Y < info.RcMonitor.Bottom {
-			return &hMonitor, deviceName, nil
+			return &hMonitor, deviceName, rl.Vector2{X: float32(info.RcMonitor.Left), Y: float32(info.RcMonitor.Top)}, nil
 		}
 	}
 
-	return nil, "", fmt.Errorf("failed to find the monitor with the cursor")
+	return nil, "", rl.Vector2{}, fmt.Errorf("failed to find the monitor with the cursor")
 }
 
 type DDCMonitor struct {
 	name            string
 	physicalMonitor *displayController.PhysicalMonitorInfo
+	pos             rl.Vector2
 } // usually external displays
 
 func (m DDCMonitor) getInstanceName() string {
 	return m.name
+}
+
+func (m DDCMonitor) getPosition() rl.Vector2 {
+	return m.pos
 }
 
 func (m DDCMonitor) setBrightness(value int) {

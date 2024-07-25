@@ -1,0 +1,2 @@
+- If I switch normally/quickly changing brightness from integrated laptop monitor to DDC external monitor, the API fails. Haven't check if get brightness is failing or set brightness
+- Also, holding custom brightness keys (golang.design/x/hotkey) doesn't continously emit the events. It batches them and then sends it. I can ask claude to give me window native global hotkey keyhook events, otherwise search for windows only lib. But first, try if I can fix the code and keep using golang.design/x/hotkey 
