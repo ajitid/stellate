@@ -22,6 +22,7 @@ Other packages to try:
 "github.com/lxn/win"
 "github.com/yusufpapurcu/wmi"
 "github.com/winlabs/gowin32"
+"github.com/hillu/go-ntdll"
 ```
 
 Code to reference:
