@@ -4,6 +4,7 @@ go 1.22.5
 
 require (
 	github.com/adrg/sysfont v0.1.2
+	github.com/avast/retry-go/v4 v4.6.0
 	github.com/gek64/displayController v1.0.2
 	github.com/gen2brain/raylib-go/raylib v0.0.0-20240628125141-62016ee92fc0
 	github.com/robotn/gohook v0.41.0

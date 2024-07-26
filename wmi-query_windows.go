@@ -69,18 +69,19 @@ func (m WMIMonitor) getPosition() rl.Vector2 {
 	return m.pos
 }
 
-func (m WMIMonitor) getBrightness() int {
+func (m WMIMonitor) getBrightness() (int, error) {
 	var monitors []WmiMonitorBrightness
 	// DISPLAY\SHP1523\5&14db058f&2&UID512_0 needs to be changed to DISPLAY\\SHP1523\\5&14db058f&2&UID512_0
 	query := fmt.Sprintf(`SELECT CurrentBrightness FROM WmiMonitorBrightness WHERE InstanceName="%s"`, strings.ReplaceAll(m.getInstanceName(), `\`, `\\`))
 	err := wmi.QueryNamespace(query, &monitors, "root\\wmi")
 	if err != nil {
-		log.Fatalf("error querying WMI: %v", err)
+		return 0, fmt.Errorf("error querying WMI: %v", err)
 	}
 	if len(monitors) != 1 {
-		log.Fatal("monitor not found")
+		return 0, fmt.Errorf("monitor not found")
 	}
-	return monitors[0].CurrentBrightness
+
+	return monitors[0].CurrentBrightness, nil
 }
 
 // Ref.

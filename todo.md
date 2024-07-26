@@ -1,5 +1,4 @@
-- Make it more resilient: changing brightness in DDC external monitor fail sometimes
-- Store in systray https://github.com/linexjlin/inputGPT/blob/main/go.mod#L6
+- Store in systray https://github.com/linexjlin/inputGPT/blob/main/go.mod#L6 and https://github.com/linexjlin/inputGPT/blob/main/go.mod#L10
 - Add manifest and ico https://github.com/akavel/rsrc
 - use floral pattern for logo (see screenshot taken in photos app in phone)
 - see syncthing docs to see all the possible options to start the app on startup

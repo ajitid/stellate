@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"time"
 
+	retry "github.com/avast/retry-go/v4"
 	"github.com/gek64/displayController"
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -20,7 +21,7 @@ const (
 )
 
 type Monitor interface {
-	getBrightness() int
+	getBrightness() (int, error)
 	setBrightness(int)
 	getInstanceName() string
 	getPosition() rl.Vector2
@@ -78,7 +79,17 @@ func brightnessSetter(commandChan <-chan BrightnessCommand, popupVisibleChan cha
 
 		m := getCursorMonitor()
 		if currentMonitor.name != m.getInstanceName() {
-			b := m.getBrightness()
+			b, err := retry.DoWithData(
+				func() (int, error) {
+					return m.getBrightness()
+				},
+				retry.Attempts(uint(5)),
+				retry.OnRetry(func(attempt uint, err error) {
+					log.Println("retrying", attempt+1, "time to get brightness")
+				}))
+			if err != nil {
+				log.Fatal(fmt.Errorf("getting monitor brightness failed: %v", err))
+			}
 
 			resetTimer <- true
 			// popup could be visible on other monitor, so we should hide it before revising its position, otherwise:

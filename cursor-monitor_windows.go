@@ -98,10 +98,10 @@ func (m DDCMonitor) setBrightness(value int) {
 	}
 }
 
-func (m DDCMonitor) getBrightness() int {
+func (m DDCMonitor) getBrightness() (int, error) {
 	b, _, _, err := displayController.GetMonitorBrightness(m.physicalMonitor.Handle)
 	if err != nil {
-		log.Fatal(err)
+		return 0, err
 	}
-	return b
+	return b, nil
 }
