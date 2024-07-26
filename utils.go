@@ -76,6 +76,10 @@ func snapSlice(points []float64) func(float64) snapResult {
 	}
 }
 
+func mapRange(value, fromLow, fromHigh, toLow, toHigh float32) float32 {
+	return (value-fromLow)*(toHigh-toLow)/(fromHigh-fromLow) + toLow
+}
+
 func drawLinesAroundCircle(center rl.Vector2, radius float32, lineCount int32, lineLength float32, color rl.Color) {
 	for i := int32(0); i < lineCount; i++ {
 		angle := float32(i) / float32(lineCount) * 2 * math.Pi

@@ -32,6 +32,8 @@ type MonitorInfo struct {
 	monitor    *Monitor
 }
 
+var currentMonitor MonitorInfo
+
 func getCursorMonitor() Monitor {
 	hMonitor, monitorDisplayName, pos, err := cursorOnMonitor()
 	if err != nil {
@@ -68,7 +70,6 @@ func getCursorMonitor() Monitor {
 }
 
 func brightnessSetter(commandChan <-chan BrightnessCommand, popupVisibleChan chan<- bool, popupPosChan chan<- rl.Vector2) {
-	var currentMonitor MonitorInfo
 	resetTimer := make(chan bool)
 	go clearCurrentMonitor(&currentMonitor, resetTimer, popupVisibleChan)
 
@@ -93,20 +94,20 @@ func brightnessSetter(commandChan <-chan BrightnessCommand, popupVisibleChan cha
 		}
 		popupVisibleChan <- true
 
+		prevBrightness := currentMonitor.brightness
 		switch command {
 		case DecreaseBrightness:
 			currentMonitor.brightness =
 				clamp(0, 100,
 					int(math.Floor(
 						snapNumber(6.25)(float64(currentMonitor.brightness)-6.25))))
-			brightness = currentMonitor.brightness
-			go m.setBrightness(currentMonitor.brightness)
 		case IncreaseBrightness:
 			currentMonitor.brightness =
 				clamp(0, 100,
 					int(math.Floor(
 						snapNumber(6.25)(float64(currentMonitor.brightness)+6.25))))
-			brightness = currentMonitor.brightness
+		}
+		if currentMonitor.brightness != prevBrightness {
 			go m.setBrightness(currentMonitor.brightness)
 		}
 	}

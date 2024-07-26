@@ -12,8 +12,6 @@ const (
 	WinHeight = 40
 )
 
-var brightness = 0
-
 func main() {
 	/*
 		Setting `FlagWindowHidden` before `InitWindow()` so that the window doesn't flashes (appears then quickly hides itself on start)
@@ -67,7 +65,7 @@ func main() {
 
 		{
 			// progress fg
-			rl.DrawRectangle((WinWidth-progressWidth)/2+progressLeftPadding, (WinHeight-progressHeight)/2, progressWidth*int32(brightness)/100, progressHeight, rl.NewColor(76, 194, 255, 255))
+			rl.DrawRectangle((WinWidth-progressWidth)/2+progressLeftPadding, (WinHeight-progressHeight)/2, progressWidth*int32(currentMonitor.brightness)/100, progressHeight, rl.NewColor(76, 194, 255, 255))
 		}
 
 		{
@@ -77,7 +75,7 @@ func main() {
 				radius float32 = 3
 			)
 			rl.DrawCircleLines(x, y, radius, rl.LightGray)
-			drawLinesAroundCircle(rl.Vector2{X: float32(x), Y: float32(y)}, radius+4.3, 8, 2.1, rl.LightGray)
+			drawLinesAroundCircle(rl.Vector2{X: float32(x), Y: float32(y)}, radius+4.3, 8, mapRange(float32(currentMonitor.brightness), 0, 100, 1, 3), rl.LightGray)
 		}
 
 		rl.EndDrawing()

@@ -4,3 +4,4 @@
 - Add manifest and ico https://github.com/akavel/rsrc
 - use floral pattern for logo (see screenshot taken in photos app in phone)
 - see syncthing docs to see all the possible options to start the app on startup
+- convert all float64 to float32 and avoid unnecessary casting
