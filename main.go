@@ -4,7 +4,7 @@ import (
 	"log"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
-	"golang.design/x/hotkey"
+	hook "github.com/robotn/gohook"
 )
 
 const (
@@ -25,7 +25,7 @@ func main() {
 		https://github.com/raysan5/raylib/discussions/2999
 		https://www.reddit.com/r/raylib/comments/o3k27c/macos_fix_high_dpi_blurry_window/
 	*/
-	rl.SetWindowState(rl.FlagWindowUndecorated | rl.FlagWindowTopmost)
+	rl.SetWindowState(rl.FlagWindowUndecorated | rl.FlagWindowTopmost | rl.FlagWindowUnfocused)
 	rl.SetTargetFPS(60)
 
 	{
@@ -52,21 +52,16 @@ func main() {
 	for !rl.WindowShouldClose() {
 		rl.BeginDrawing()
 
-		rl.ClearBackground(rl.NewColor(0, 0, 0, 0))
+		rl.ClearBackground(rl.Blank)
 
 		// If rounded edge still look like chamfer, see https://www.reddit.com/r/raylib/comments/17obnui/how_to_anti_aliasing_for_shapes/ to improve
 		// Right now I've used `rl.FlagMsaa4xHint` as config flag
 		rl.DrawRectangleRounded(winSizedRect, 0.3, 8, rl.NewColor(1, 4, 9, 255))
 
-		{
-			// progress bg
-			rl.DrawRectangle((WinWidth-progressWidth)/2+progressLeftPadding, (WinHeight-progressHeight)/2, progressWidth, progressHeight, rl.NewColor(27, 28, 32, 255))
-		}
-
-		{
-			// progress fg
-			rl.DrawRectangle((WinWidth-progressWidth)/2+progressLeftPadding, (WinHeight-progressHeight)/2, progressWidth*int32(currentMonitor.brightness)/100, progressHeight, rl.NewColor(76, 194, 255, 255))
-		}
+		// progress bg
+		rl.DrawRectangle((WinWidth-progressWidth)/2+progressLeftPadding, (WinHeight-progressHeight)/2, progressWidth, progressHeight, rl.NewColor(27, 28, 32, 255))
+		// progress fg
+		rl.DrawRectangle((WinWidth-progressWidth)/2+progressLeftPadding, (WinHeight-progressHeight)/2, progressWidth*int32(currentMonitor.brightness)/100, progressHeight, rl.NewColor(76, 194, 255, 255))
 
 		{
 			var (
@@ -78,38 +73,49 @@ func main() {
 			drawLinesAroundCircle(rl.Vector2{X: float32(x), Y: float32(y)}, radius+4.3, 8, mapRange(float32(currentMonitor.brightness), 0, 100, 1, 3), rl.LightGray)
 		}
 
+		/*
+			If you want to render text, use FilterBilinear with this trick
+			https://github.com/raysan5/raylib/issues/2355#issuecomment-1050059197.
+
+			Another thing to know is if you open a font file you'd see font displayed
+			in different sizes (some multiples): 12, 18, 24, 36, 48... Turns out the
+			fonts will be best displayed in these sizes. So when loading a font with
+			LoadFontEx(), choose a higher size from this multiple and also when
+			drawing the text, prefer to stick to a size that belongs to this multiple.
+			https://www.reddit.com/r/raylib/comments/1dqwldb/can_i_render_text_with_a_sdf_font_shader_to_a/lb02ld0/
+
+			SDL font rendering will always give better quality though:
+			- https://www.reddit.com/r/raylib/comments/xfrv7y/text_kerning/
+			- https://gist.github.com/raysan5/17392498d40e2cb281f5d09c0a4bf798#file-formats-support
+
+			Finally, find locally installed system font (like Segoe UI) with this
+			https://github.com/adrg/sysfont
+		*/
+
 		rl.EndDrawing()
 	}
 }
 
 func registerHotkeys(brightnessCommandChan chan<- BrightnessCommand) {
+	evChan := hook.Start()
+	defer hook.End()
+
 	/*
-		https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+		chosen scroll lock & pause because they are repurposed in macOS for brightness as well:
 		https://community.keyboard.io/t/what-are-the-codes-for-the-brightness-control-keys/4094
 		https://www.reddit.com/r/Keychron/comments/1034z92/brightness_keys_mac_external_display/
 	*/
-	brightnessUpKey := hotkey.New([]hotkey.Modifier{}, hotkey.Key(0x13)) // win virtual keycode for pause
-	err := brightnessUpKey.Register()
-	if err != nil {
-		log.Fatalf("hotkey: failed to register hotkey: %v", err)
-		return
-	}
-	defer brightnessUpKey.Unregister()
+	for ev := range evChan {
+		if ev.Kind == hook.KeyHold || ev.Kind == hook.KeyDown {
+			// fmt.Printf("Key event - Raw code: %v, Keychar: %c\n", ev.Rawcode, ev.Keychar)
 
-	brightnessDownKey := hotkey.New([]hotkey.Modifier{}, hotkey.Key(0x91)) // win virtual keycode for scroll lock
-	err = brightnessDownKey.Register()
-	if err != nil {
-		log.Fatalf("hotkey: failed to register hotkey: %v", err)
-		return
-	}
-	defer brightnessDownKey.Unregister()
-
-	for {
-		select {
-		case <-brightnessUpKey.Keydown():
-			brightnessCommandChan <- IncreaseBrightness
-		case <-brightnessDownKey.Keydown():
-			brightnessCommandChan <- DecreaseBrightness
+			// The rawcode for pause and scroll lock is possibily limited to Windows. Other OSs may emit some other rawcode
+			switch ev.Rawcode {
+			case 19: // Pause key
+				brightnessCommandChan <- IncreaseBrightness
+			case 145: // Scroll Lock
+				brightnessCommandChan <- DecreaseBrightness
+			}
 		}
 	}
 }

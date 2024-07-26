@@ -1,7 +1,8 @@
-- Make it more resilient: If I switch normally/quickly changing brightness from integrated laptop monitor to DDC external monitor, the API fails. Haven't check if get brightness is failing or set brightness
-- Also, holding custom brightness keys (golang.design/x/hotkey) doesn't continously emit the events. It batches them and then sends it. I can ask claude to give me window native global hotkey keyhook events, otherwise search for windows only lib. But first, try if I can fix the code and keep using golang.design/x/hotkey 
+- Make it more resilient: changing brightness in DDC external monitor fail sometimes
 - Store in systray https://github.com/linexjlin/inputGPT/blob/main/go.mod#L6
 - Add manifest and ico https://github.com/akavel/rsrc
 - use floral pattern for logo (see screenshot taken in photos app in phone)
 - see syncthing docs to see all the possible options to start the app on startup
-- convert all float64 to float32 and avoid unnecessary casting
+- convert all float64 to float32 and avoid unnecessary casting. Use generics if needed
+- filenames don't make sense. Rename them and group stuff properly.
+- because it uses accelerated renderer, monitor disconnects causes issues (hybrid/optmised mode). Rounded borders go away for one. And switching from Standard to Optimised kills the app. Using SDL2 software renderer may help here. Otherwise running on dGPU may kill the battery. See https://www.reddit.com/r/raylib/comments/191o1xz/transparent_overlay_window_help/
