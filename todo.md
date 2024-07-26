@@ -2,6 +2,9 @@
 - Add manifest and ico https://github.com/akavel/rsrc
 - use floral pattern for logo (see screenshot taken in photos app in phone)
 - see syncthing docs to see all the possible options to start the app on startup
+  - alternatively, systray mentions a method with go flags that doesn't popup cmd prompt (this is a go thing and so it works without using systray as well) https://github.com/getlantern/systray?tab=readme-ov-file#windows
+  - obviously you'd want to keep only one instance running. https://claude.ai/chat/38e56e68-e64a-4a1b-8272-7ac1a5e7ba82 with `taskkill /im scintilla.exe` (preferably full path to scintilla) may work.
+  - for now, autohotkey method is ok 
 - convert all float64 to float32 and avoid unnecessary casting. Use generics if needed
 - filenames don't make sense. Rename them and group stuff properly.
 - because it uses accelerated renderer, monitor disconnects causes issues (hybrid/optmised mode). Rounded borders go away for one. And switching from Standard to Optimised kills the app. Using SDL2 software renderer may help here. Otherwise running on dGPU may kill the battery. See https://www.reddit.com/r/raylib/comments/191o1xz/transparent_overlay_window_help/
