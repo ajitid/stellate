@@ -18,7 +18,7 @@ func main() {
 		Setting the rest in `SetWindowState()` as not every flag is configurable before window creation, see https://github.com/raysan5/raylib/issues/1367#issue-690893773
 	*/
 	rl.SetConfigFlags(rl.FlagWindowHidden | rl.FlagWindowTransparent | rl.FlagMsaa4xHint | rl.FlagWindowHighdpi)
-	rl.InitWindow(WinWidth, WinHeight, "scintilla")
+	rl.InitWindow(WinWidth, WinHeight, "stellate")
 	defer rl.CloseWindow()
 	/*
 		I don't know if I _need_ HiDPI flag or not, see:

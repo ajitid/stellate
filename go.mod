@@ -1,4 +1,4 @@
-module github.com/ajitid/scintilla
+module github.com/ajitid/stellate
 
 go 1.22.5
 
