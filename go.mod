@@ -3,6 +3,7 @@ module github.com/ajitid/stellate
 go 1.22.5
 
 require (
+	fyne.io/systray v1.11.0
 	github.com/adrg/sysfont v0.1.2
 	github.com/avast/retry-go/v4 v4.6.0
 	github.com/gek64/displayController v1.0.2
@@ -16,6 +17,7 @@ require (
 	github.com/adrg/xdg v0.3.0 // indirect
 	github.com/ebitengine/purego v0.7.1 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
+	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/vcaesar/keycode v0.10.1 // indirect
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/sys v0.22.0 // indirect

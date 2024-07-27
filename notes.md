@@ -23,6 +23,7 @@ Other packages to try:
 "github.com/yusufpapurcu/wmi"
 "github.com/winlabs/gowin32"
 "github.com/hillu/go-ntdll"
+"github.com/rodrigocfd/windigo"
 ```
 
 Code to reference:

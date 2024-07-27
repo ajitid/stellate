@@ -1,3 +1,5 @@
+fyne.io/systray v1.11.0 h1:D9HISlxSkx+jHSniMBR6fCFOUjk1x/OOOJLa9lJYAKg=
+fyne.io/systray v1.11.0/go.mod h1:RVwqP9nYMo7h5zViCBHri2FgjXF7H2cub7MAq4NSoLs=
 github.com/adrg/strutil v0.2.2 h1:XSd9+o2xaOon2oRum0JymNT+f0nfLiAiDzGOcjcIsMI=
 github.com/adrg/strutil v0.2.2/go.mod h1:EF2fjOFlGTepljfI+FzgTG13oXthR7ZAil9/aginnNQ=
 github.com/adrg/sysfont v0.1.2 h1:MSU3KREM4RhsQ+7QgH7wPEPTgAgBIz0Hw6Nd4u7QgjE=
@@ -17,6 +19,8 @@ github.com/gen2brain/raylib-go/raylib v0.0.0-20240628125141-62016ee92fc0 h1:mhWZ
 github.com/gen2brain/raylib-go/raylib v0.0.0-20240628125141-62016ee92fc0/go.mod h1:BaY76bZk7nw1/kVOSQObPY1v1iwVE1KHAGMfvI6oK1Q=
 github.com/go-ole/go-ole v1.2.6 h1:/Fpf6oFPoeFik9ty7siob0G6Ke8QvQEuVcuChpwXzpY=
 github.com/go-ole/go-ole v1.2.6/go.mod h1:pprOEPIfldk/42T2oK7lQ4v4JSDwmV0As9GaiUsvbm0=
+github.com/godbus/dbus/v5 v5.1.0 h1:4KLkAxT3aOY8Li4FRJe/KvhoNFFxo0m6fNuFUO8QJUk=
+github.com/godbus/dbus/v5 v5.1.0/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/robotn/gohook v0.41.0 h1:h1vK3w/UQpq0YkIiGnxm9Awv85W54esL0/NUYGueggo=

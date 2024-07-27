@@ -2,7 +2,9 @@ package main
 
 import (
 	"log"
+	"os"
 
+	"fyne.io/systray"
 	rl "github.com/gen2brain/raylib-go/raylib"
 	hook "github.com/robotn/gohook"
 )
@@ -12,7 +14,21 @@ const (
 	WinHeight = 40
 )
 
+var quit = false // probably ok that it is not protected by a mutex
+
 func main() {
+	startSystray, stopSystray := systray.RunWithExternalLoop(func() {
+		iconBytes, err := os.ReadFile("icon.ico")
+		if err != nil {
+			log.Fatal(err)
+		}
+		systray.SetIcon(iconBytes)
+		systray.SetTitle("Stellate")
+	}, func() {})
+	startSystray()
+	go setupSystray()
+	defer stopSystray()
+
 	/*
 		Setting `FlagWindowHidden` before `InitWindow()` so that the window doesn't flashes (appears then quickly hides itself on start)
 		Setting the rest in `SetWindowState()` as not every flag is configurable before window creation, see https://github.com/raysan5/raylib/issues/1367#issue-690893773
@@ -49,7 +65,7 @@ func main() {
 		progressHeight      int32 = 4
 	)
 
-	for !rl.WindowShouldClose() {
+	for !quit {
 		rl.BeginDrawing()
 
 		rl.ClearBackground(rl.Blank)
@@ -94,6 +110,16 @@ func main() {
 
 		rl.EndDrawing()
 	}
+}
+
+func setupSystray() {
+	name := systray.AddMenuItem("Stellate", "")
+	name.Disable()
+	systray.AddSeparator()
+	exit := systray.AddMenuItem("Exit", "")
+
+	<-exit.ClickedCh
+	quit = true
 }
 
 func registerHotkeys(brightnessCommandChan chan<- BrightnessCommand) {
