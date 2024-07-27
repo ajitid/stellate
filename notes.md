@@ -24,6 +24,7 @@ Other packages to try:
 "github.com/winlabs/gowin32"
 "github.com/hillu/go-ntdll"
 "github.com/rodrigocfd/windigo"
+"github.com/iamacarpet/go-win64api"
 ```
 
 Code to reference:
@@ -133,3 +134,4 @@ func decodeWMIString(s string) string {
 ## Rest
 
 https://github.com/nyaosorg/go-windows-su sudo/administrator
+https://claude.ai/chat/46f64a64-2c6d-41ec-b77a-6f079bcd5662 get theme and theme change detection

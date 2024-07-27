@@ -24,6 +24,7 @@ func main() {
 			log.Fatal(err)
 		}
 		systray.SetIcon(iconBytes)
+		systray.SetTooltip("Stellate")
 		systray.SetTitle("Stellate")
 	}, func() {})
 	startSystray()
@@ -84,7 +85,7 @@ func main() {
 		// progress bg
 		rl.DrawRectangle((WinWidth-progressWidth)/2+progressLeftPadding, (WinHeight-progressHeight)/2, progressWidth, progressHeight, rl.NewColor(27, 28, 32, 255))
 		// progress fg
-		rl.DrawRectangle((WinWidth-progressWidth)/2+progressLeftPadding, (WinHeight-progressHeight)/2, progressWidth*int32(currentMonitor.brightness)/100, progressHeight, rl.NewColor(76, 194, 255, 255))
+		rl.DrawRectangle((WinWidth-progressWidth)/2+progressLeftPadding, (WinHeight-progressHeight)/2, progressWidth*int32(currentMonitor.brightness)/100, progressHeight, rl.NewColor(57, 166, 222, 255))
 
 		{
 			var (
