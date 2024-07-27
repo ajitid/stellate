@@ -7,6 +7,7 @@ import (
 	"fyne.io/systray"
 	rl "github.com/gen2brain/raylib-go/raylib"
 	hook "github.com/robotn/gohook"
+	"golang.org/x/sys/windows"
 )
 
 const (
@@ -42,6 +43,12 @@ func main() {
 		https://www.reddit.com/r/raylib/comments/o3k27c/macos_fix_high_dpi_blurry_window/
 	*/
 	rl.SetWindowState(rl.FlagWindowUndecorated | rl.FlagWindowTopmost | rl.FlagWindowUnfocused)
+
+	// hide window from showing up in the taskbar whenever `rl.FlagWindowHidden` flag is cleared
+	hwnd := rl.GetWindowHandle()
+	windowLong := getWindowLongPtr(windows.HWND(hwnd), GWL_EXSTYLE)
+	setWindowLongPtr(windows.HWND(hwnd), GWL_EXSTYLE, windowLong|WS_EX_TOOLWINDOW)
+
 	rl.SetTargetFPS(60)
 
 	{

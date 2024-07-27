@@ -1,6 +1,7 @@
 **Raylib**
 
 This may affect your window positioning logic https://github.com/raysan5/raylib/pull/3950
+Also see https://stackoverflow.com/questions/64518580/borderless-window-covers-taskbar
 
 ## Using Raylib without CGo
 
