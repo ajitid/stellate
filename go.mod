@@ -10,6 +10,7 @@ require (
 	github.com/gen2brain/raylib-go/raylib v0.0.0-20240628125141-62016ee92fc0
 	github.com/robotn/gohook v0.41.0
 	github.com/yusufpapurcu/wmi v1.2.4
+	golang.org/x/sys v0.22.0
 )
 
 require (
@@ -20,5 +21,4 @@ require (
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/vcaesar/keycode v0.10.1 // indirect
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
-	golang.org/x/sys v0.22.0 // indirect
 )

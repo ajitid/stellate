@@ -19,7 +19,7 @@ From https://github.com/gopxl/pixel/wiki/Creating-a-Window#run
 - https://github.com/gopxl/mainthread for solving the above problem
 - https://github.com/gopxl/beep for sound
 - https://github.com/gopxl/glhf for OpenGL
-
+- what is font atlas: https://github.com/gopxl/pixel/wiki/Typing-text-on-the-screen
 
 ---
 

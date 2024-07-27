@@ -1,6 +1,7 @@
 - ✅ Store in systray https://github.com/fyne-io/systray + https://github.com/linexjlin/inputGPT/blob/main/go.mod#L10 
 - ✅ Add manifest and ico https://github.com/akavel/rsrc
 - use floral pattern for logo (see screenshot taken in photos app in phone)
+- use github CI to auto build
 - see syncthing docs to see all the possible options to start the app on startup
   - alternatively, systray mentions a method with go flags that doesn't popup cmd prompt (this is a go thing and so it works without using systray as well) https://github.com/fyne-io/systray?tab=readme-ov-file#windows
   - obviously you'd want to keep only one instance running. https://claude.ai/chat/38e56e68-e64a-4a1b-8272-7ac1a5e7ba82 with `taskkill /im stellate.exe` (preferably full path to stellate) may work.

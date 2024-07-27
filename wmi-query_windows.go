@@ -5,6 +5,7 @@ import (
 	"log"
 	"os/exec"
 	"strings"
+	"syscall"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/yusufpapurcu/wmi"
@@ -92,6 +93,10 @@ func (m WMIMonitor) setBrightness(value int) {
 	cmd := exec.Command("wmic", `/NAMESPACE:\\root\wmi`, "PATH", "WmiMonitorBrightnessMethods",
 		"WHERE", fmt.Sprintf("Active=TRUE AND InstanceName='%s'", strings.ReplaceAll(m.getInstanceName(), `\`, `\\`)),
 		"CALL", "WmiSetBrightness", fmt.Sprintf("Brightness=%d", value), "Timeout=0")
+	// don't flash the cmd prompt when running the cmd
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		HideWindow: true,
+	}
 	if err := cmd.Run(); err != nil {
 		log.Fatal(err)
 	}
