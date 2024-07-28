@@ -7,6 +7,7 @@ import (
 
 	"github.com/adrg/sysfont"
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"golang.org/x/exp/constraints"
 )
 
 func getSystemFontPath() string {
@@ -34,41 +35,41 @@ func clamp(min, max, val int) int {
 	return val
 }
 
-// snapResult is a struct to hold the result of the SnapSlice function
-type snapResult struct {
-	Point float64
-	Index int
-}
-
 // snapNumber takes a float64 and returns a function that snaps a value to the nearest multiple of the input
-func snapNumber(point float64) func(float64) float64 {
-	return func(v float64) float64 {
-		return math.Round(v/point) * point
+func snapNumber[T constraints.Float](point T) func(T) T {
+	return func(v T) T {
+		return T(math.Round(float64(v/point))) * point
 	}
 }
 
-// snapSlice takes a slice of float64 and returns a function that snaps a value to the nearest point in the slice
-func snapSlice(points []float64) func(float64) snapResult {
-	return func(v float64) snapResult {
+// snapResult is a struct to hold the result of the SnapSlice function
+type snapResult[T constraints.Float] struct {
+	point T
+	index int
+}
+
+// snapSlice takes a slice of T and returns a function that snaps a value to the nearest point in the slice
+func snapSlice[T constraints.Float](points []T) func(T) snapResult[T] {
+	return func(v T) snapResult[T] {
 		if len(points) == 0 {
-			return snapResult{Point: 0, Index: -1}
+			return snapResult[T]{point: 0, index: -1}
 		}
 
-		lastDistance := math.Abs(points[0] - v)
-		result := snapResult{Point: points[0], Index: 0}
+		lastDistance := T(math.Abs(float64(points[0] - v)))
+		result := snapResult[T]{point: points[0], index: 0}
 
 		for i := 1; i < len(points); i++ {
-			distance := math.Abs(points[i] - v)
+			distance := T(math.Abs(float64(points[i] - v)))
 
 			if distance == 0 {
-				return snapResult{Point: points[i], Index: i}
+				return snapResult[T]{point: points[i], index: i}
 			}
 
 			if distance > lastDistance {
 				return result
 			}
 
-			result = snapResult{Point: points[i], Index: i}
+			result = snapResult[T]{point: points[i], index: i}
 			lastDistance = distance
 		}
 
@@ -76,12 +77,12 @@ func snapSlice(points []float64) func(float64) snapResult {
 	}
 }
 
-func mapRange(value, fromLow, fromHigh, toLow, toHigh float32) float32 {
+func mapRange[T constraints.Float](value, fromLow, fromHigh, toLow, toHigh T) T {
 	return (value-fromLow)*(toHigh-toLow)/(fromHigh-fromLow) + toLow
 }
 
-func drawLinesAroundCircle(center rl.Vector2, radius float32, lineCount int32, lineLength float32, color rl.Color) {
-	for i := int32(0); i < lineCount; i++ {
+func drawLinesAroundCircle(center rl.Vector2, radius float32, lineCount int, lineLength float32, color rl.Color) {
+	for i := 0; i < lineCount; i++ {
 		angle := float32(i) / float32(lineCount) * 2 * math.Pi
 		start := rl.Vector2{
 			X: center.X + float32(math.Cos(float64(angle)))*radius,

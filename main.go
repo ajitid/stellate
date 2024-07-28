@@ -66,10 +66,23 @@ func main() {
 	}
 
 	var (
-		progressWidth       int32 = (WinWidth * 0.7)
-		progressLeftPadding int32 = 15
-		progressHeight      int32 = 4
+		progressWidth  float32 = (WinWidth * 0.7)
+		progressHeight float32 = 4
+		progressX      float32 = (WinWidth-progressWidth)/2 + 15
+		progressY      float32 = (WinHeight - progressHeight) / 2
 	)
+	progressBgRect := rl.Rectangle{
+		X:      progressX,
+		Y:      progressY,
+		Width:  progressWidth,
+		Height: progressHeight,
+	}
+	progressFgRect := rl.Rectangle{
+		X:      progressX,
+		Y:      progressY,
+		Width:  0,
+		Height: progressHeight,
+	}
 
 	for !quit {
 		rl.BeginDrawing()
@@ -81,18 +94,20 @@ func main() {
 		rl.DrawRectangleRounded(winSizedRect, 0.3, 8, rl.NewColor(1, 4, 9, 255))
 
 		// progress bg
-		rl.DrawRectangle((WinWidth-progressWidth)/2+progressLeftPadding, (WinHeight-progressHeight)/2, progressWidth, progressHeight, rl.NewColor(27, 28, 32, 255))
+		rl.DrawRectangleRec(progressBgRect, rl.NewColor(27, 28, 32, 255))
 		// progress fg
-		rl.DrawRectangle((WinWidth-progressWidth)/2+progressLeftPadding, (WinHeight-progressHeight)/2, progressWidth*int32(currentMonitor.brightness)/100, progressHeight, rl.NewColor(57, 166, 222, 255))
+		progressFgRect.Width = progressWidth * float32(currentMonitor.brightness) / 100
+		rl.DrawRectangleRec(progressFgRect, rl.NewColor(57, 166, 222, 255))
 
 		{
-			var (
-				x      int32   = WinWidth * 13 / 100
-				y      int32   = WinHeight / 2
-				radius float32 = 3
-			)
-			rl.DrawCircleLines(x, y, radius, rl.LightGray)
-			drawLinesAroundCircle(rl.Vector2{X: float32(x), Y: float32(y)}, radius+4.3, 8, mapRange(float32(currentMonitor.brightness), 0, 100, 1, 3), rl.LightGray)
+			center := rl.Vector2{
+				X: WinWidth * 13 / 100,
+				Y: WinHeight / 2,
+			}
+			var radius float32 = 3
+			rl.DrawCircleV(center, radius, rl.LightGray)
+			lineLength := mapRange(float32(currentMonitor.brightness), 0, 100, 1, 3)
+			drawLinesAroundCircle(center, radius+4.3, 8, lineLength, rl.LightGray)
 		}
 
 		/*
