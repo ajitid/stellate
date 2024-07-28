@@ -11,7 +11,7 @@ _Stellate is in usable state but is not finished. That is why I haven't provided
 
 1. Clone this repository
 1. Install golang
-1. Run `go build -ldflags "-H=windowsgui"` in the project root. A file called stellate.exe will be built.
+1. Run `go build -ldflags "-H=windowsgui"` in the project root (this may take few mins to complete). A file called stellate.exe will be built.
 1. Open Windows Explorer and copy this file. Then press <kbd>Win</kbd>+<kbd>R</kbd> key and type `shell:startup`. Right click and Paste Shortcut.
 1. Double click on this shortcut. The program will run. 
 

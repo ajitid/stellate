@@ -18,6 +18,10 @@ const (
 var quit = false // probably ok that it is not protected by a mutex
 
 func main() {
+	if !checkSingleInstance() {
+		os.Exit(1)
+	}
+
 	startSystray, stopSystray := systray.RunWithExternalLoop(func() {
 		iconBytes, err := os.ReadFile("icon.ico")
 		if err != nil {
