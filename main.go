@@ -114,25 +114,6 @@ func main() {
 			drawLinesAroundCircle(center, radius+4.3, 8, lineLength, rl.LightGray)
 		}
 
-		/*
-			If you want to render text, use FilterBilinear with this trick
-			https://github.com/raysan5/raylib/issues/2355#issuecomment-1050059197.
-
-			Another thing to know is if you open a font file you'd see font displayed
-			in different sizes (some multiples): 12, 18, 24, 36, 48... Turns out the
-			fonts will be best displayed in these sizes. So when loading a font with
-			LoadFontEx(), choose a higher size from this multiple and also when
-			drawing the text, prefer to stick to a size that belongs to this multiple.
-			https://www.reddit.com/r/raylib/comments/1dqwldb/can_i_render_text_with_a_sdf_font_shader_to_a/lb02ld0/
-
-			SDL font rendering will always give better quality though:
-			- https://www.reddit.com/r/raylib/comments/xfrv7y/text_kerning/
-			- https://gist.github.com/raysan5/17392498d40e2cb281f5d09c0a4bf798#file-formats-support
-
-			Finally, find locally installed system font (like Segoe UI) with this
-			https://github.com/adrg/sysfont
-		*/
-
 		rl.EndDrawing()
 	}
 }
