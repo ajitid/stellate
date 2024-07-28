@@ -35,7 +35,7 @@ func main() {
 		Setting `FlagWindowHidden` before `InitWindow()` so that the window doesn't flashes (appears then quickly hides itself on start)
 		Setting the rest in `SetWindowState()` as not every flag is configurable before window creation, see https://github.com/raysan5/raylib/issues/1367#issue-690893773
 	*/
-	rl.SetConfigFlags(rl.FlagWindowHidden | rl.FlagWindowTransparent | rl.FlagMsaa4xHint | rl.FlagWindowHighdpi)
+	rl.SetConfigFlags(rl.FlagWindowHidden | rl.FlagWindowTransparent | rl.FlagMsaa4xHint | rl.FlagVsyncHint)
 	rl.InitWindow(WinWidth, WinHeight, "stellate")
 	defer rl.CloseWindow()
 	/*
@@ -49,8 +49,6 @@ func main() {
 	hwnd := rl.GetWindowHandle()
 	windowLong := getWindowLongPtr(windows.HWND(hwnd), GWL_EXSTYLE)
 	setWindowLongPtr(windows.HWND(hwnd), GWL_EXSTYLE, windowLong|WS_EX_TOOLWINDOW)
-
-	rl.SetTargetFPS(60)
 
 	{
 		brightnessCommandChan := make(chan BrightnessCommand, 1)
