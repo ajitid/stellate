@@ -1,13 +1,14 @@
 # Stellate
 
-A Windows utility to control brightness of the display where your cursor is on using keyboard shortcuts.
+A Windows utility to control brightness of the display on which your cursor is using keyboard shortcuts.
+
+[Watch the demo ❯](https://youtu.be/zjkvVxx87gg)
 
 ## How to Download and Use
 
 1. Download the [latest release](https://github.com/ajitid/stellate/releases/latest). It would be named `stellate-<version>.zip`. Extract it.
 1. Inside the extracted folder there would be `stellate.exe`. Copy it, and then press <kbd>Win</kbd>+<kbd>R</kbd> keys and type `shell:startup`. Upon hitting enter a folder will open up. Right click and choose Paste Shortcut.
-1. Double-click on this shortcut. The program will run. 
-
+1. Double-click on this shortcut. The program will run.
 
 Use Pause key to increase and Scroll Lock key to decrease brightness.
 
