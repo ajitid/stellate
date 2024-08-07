@@ -2,7 +2,7 @@
 
 A Windows utility to control brightness of the display on which your cursor is using keyboard shortcuts.
 
-[Watch the demo ❯](https://youtu.be/zjkvVxx87gg)
+[Watch the demo ›](https://youtu.be/zjkvVxx87gg)
 
 ## How to Download and Use
 
