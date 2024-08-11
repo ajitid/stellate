@@ -90,6 +90,7 @@ func (m WMIMonitor) getBrightness() (int, error) {
 // I wanted to use this but I couldn't figure it out
 // https://github.com/StackExchange/wmi/pull/45#issuecomment-590396746
 func (m WMIMonitor) setBrightness(value int) {
+	// TODO wmic is deprecated, see https://stackoverflow.com/a/56350464
 	cmd := exec.Command("wmic", `/NAMESPACE:\\root\wmi`, "PATH", "WmiMonitorBrightnessMethods",
 		"WHERE", fmt.Sprintf("Active=TRUE AND InstanceName='%s'", strings.ReplaceAll(m.getInstanceName(), `\`, `\\`)),
 		"CALL", "WmiSetBrightness", fmt.Sprintf("Brightness=%d", value), "Timeout=0")

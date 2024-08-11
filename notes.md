@@ -8,7 +8,6 @@ There's also https://gobyexample.com/embed-directive
 https://pkg.go.dev/golang.design/x/hotkey
 https://github.com/micmonay/keybd_event
 
-
 ## Display name to device ID mapping
 
 [This](https://github.com/posthumz/DisplayDevices) from [here](https://www.reddit.com/r/PowerShell/comments/19e7das/getting_display_id_for_a_display_device/)
@@ -25,9 +24,13 @@ Other packages to try:
 "github.com/hillu/go-ntdll"
 "github.com/rodrigocfd/windigo"
 "github.com/iamacarpet/go-win64api"
+"github.com/Microsoft/go-winio"
+"github.com/dblohm7/wingoes"
+"github.com/gonutz/w32" < preferred, acts like win32 python package
 ```
 
 Code to reference:
+
 - https://github.com/PoeBlu/hardentools/blob/master/autorun.go
 - https://github.com/linexjlin/inputGPT
 - https://github.com/st0le/winrec
@@ -87,7 +90,7 @@ Get-WmiObject WmiMonitorID -Namespace root\wmi | Where-Object { $_.InstanceName 
 Get-WmiObject -Query "SELECT InstanceName FROM WmiMonitorID" -Namespace root\wmi
 ```
 
-Prefer option B as it doesn't capitalizes `14db058f` part of `DISPLAY\SHP1523\5&14db058f&2&UID512_0` and thus can directly be supplied to monitorian (after stripping _0 of course).
+Prefer option B as it doesn't capitalizes `14db058f` part of `DISPLAY\SHP1523\5&14db058f&2&UID512_0` and thus can directly be supplied to monitorian (after stripping \_0 of course).
 
 ## Softwares to control brightness
 
