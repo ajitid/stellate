@@ -39,14 +39,14 @@ func main() {
 		Setting `FlagWindowHidden` before `InitWindow()` so that the window doesn't flashes (appears then quickly hides itself on start)
 		Setting the rest in `SetWindowState()` as not every flag is configurable before window creation, see https://github.com/raysan5/raylib/issues/1367#issue-690893773
 	*/
-	rl.SetConfigFlags(rl.FlagWindowHidden | rl.FlagWindowTransparent | rl.FlagMsaa4xHint | rl.FlagVsyncHint)
-	rl.InitWindow(WinWidth, WinHeight, "stellate")
-	defer rl.CloseWindow()
 	/*
-		I don't know if I _need_ HiDPI flag or not, see:
+		more info about HiDPI
 		https://github.com/raysan5/raylib/discussions/2999
 		https://www.reddit.com/r/raylib/comments/o3k27c/macos_fix_high_dpi_blurry_window/
 	*/
+	rl.SetConfigFlags(rl.FlagWindowHidden | rl.FlagWindowTransparent | rl.FlagMsaa4xHint | rl.FlagVsyncHint | rl.FlagWindowHighdpi)
+	rl.InitWindow(WinWidth, WinHeight, "stellate")
+	defer rl.CloseWindow()
 	rl.SetWindowState(rl.FlagWindowUndecorated | rl.FlagWindowTopmost | rl.FlagWindowUnfocused)
 
 	// hide window from showing up in the taskbar whenever `rl.FlagWindowHidden` flag is cleared
