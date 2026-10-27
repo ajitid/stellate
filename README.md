@@ -1,4 +1,4 @@
-_Update: I stopped using Windows so I don't maintain this anymore. That being said you can ask an LLM to take this code as the base and create a Rust/Zig port of Stellate get a reliable app and add your own customizations. Happy Hacking!_
+_Update: I stopped using Windows so I don't maintain this anymore. That being said, you can ask an LLM to take this code as the base and create a Rust/Zig port of Stellate get a reliable app and add your own customizations on top of it. Happy Hacking!_
 
 ---
 
