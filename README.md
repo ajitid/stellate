@@ -1,3 +1,7 @@
+_Update: I stopped using Windows so I don't maintain this anymore. That being said you can ask an LLM to take this code as the base and create a Rust/Zig port of Stellate get a reliable app and add your own customizations. Happy Hacking!_
+
+---
+
 # Stellate
 
 A Windows utility to control brightness of the display on which your cursor is using keyboard shortcuts.
